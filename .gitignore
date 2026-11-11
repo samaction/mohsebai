@@ -1,0 +1,50 @@
+*.iml
+.gradle/
+/local.properties
+/.idea/
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+
+# Exclude Windows user profile folders and system files
+/AppData/
+/Downloads/
+/Documents/
+/Pictures/
+/Videos/
+/Music/
+/Searches/
+/Saved Games/
+/Favorites/
+/Contacts/
+/Links/
+/OneDrive/
+/Recent/
+/SendTo/
+/Templates/
+/PrintHood/
+/NetHood/
+/Start Menu/
+/3D Objects/
+/ApkProjects/
+/ALMunazzim_Hisabat/
+/.android/
+/.android-studio/
+/.vscode/
+/.vscode-shared/
+/.agents/
+/.config/
+/.gemini/
+/.kotlin/
+/.cache/
+/.local/
+/.skiko/
+/.jdks/
+/*.log
+/*.DAT*
+/*.regtrans-ms
+/*.blf
+/*.db

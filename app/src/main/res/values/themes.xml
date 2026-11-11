@@ -1,0 +1,4 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- الثيم الأساسي للتطبيق -->
+    <style name="Theme.HallCenter" parent="android:Theme.Material.Light.NoActionBar" />
+</resources>
