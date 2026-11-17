@@ -5,9 +5,21 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [DataEntity::class], version = 1, exportSchema = false)
+@Database(
+    entities = [
+        TransactionEntity::class,
+        AccountEntity::class,
+        JournalEntryEntity::class,
+        InventoryItemEntity::class,
+        InvoiceEntity::class
+    ],
+    version = 3,
+    exportSchema = false
+)
 abstract class AppDatabase : RoomDatabase() {
-    abstract fun dataDao(): DataDao
+
+    abstract fun transactionDao(): TransactionDao
+    abstract fun accountingDao(): AccountingDao
 
     companion object {
         @Volatile
@@ -18,8 +30,10 @@ abstract class AppDatabase : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     AppDatabase::class.java,
-                    "my_database"
-                ).build()
+                    "mohasib_ai_enterprise_database"
+                )
+                .fallbackToDestructiveMigration()
+                .build()
                 INSTANCE = instance
                 instance
             }

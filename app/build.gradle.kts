@@ -54,6 +54,7 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
+    implementation("androidx.compose.material:material-icons-extended")
 
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
@@ -79,7 +80,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 
     // Firebase (BOM, Analytics, Auth, Firestore)
-    val firebaseBom = platform("com.google.firebase:firebase-bom:35.1.0")
+    val firebaseBom = platform("com.google.firebase:firebase-bom:33.3.0")
     implementation(firebaseBom)
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-auth")
