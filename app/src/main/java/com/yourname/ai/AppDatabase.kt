@@ -11,9 +11,11 @@ import androidx.room.RoomDatabase
         AccountEntity::class,
         JournalEntryEntity::class,
         InventoryItemEntity::class,
-        InvoiceEntity::class
+        InvoiceEntity::class,
+        InvoiceItemEntity::class,
+        CustomerSupplierEntity::class
     ],
-    version = 3,
+    version = 4,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -30,7 +32,7 @@ abstract class AppDatabase : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     AppDatabase::class.java,
-                    "mohasib_ai_enterprise_database"
+                    "mohasib_ai_enterprise_v4_database"
                 )
                 .fallbackToDestructiveMigration()
                 .build()

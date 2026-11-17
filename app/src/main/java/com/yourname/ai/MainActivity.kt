@@ -33,6 +33,14 @@ import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
+enum class AppNavTab {
+    DASHBOARD, // الرئيسية
+    INVOICES,  // الفواتير
+    DEBTS,     // العملاء والذمم
+    INVENTORY, // المخزون
+    AI_CHAT    // الذكاء الاصطناعي
+}
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,6 +75,8 @@ fun MainDashboardScreen(
     val db = remember { AppDatabase.getDatabase(context) }
     val scope = rememberCoroutineScope()
 
+    var currentTab by remember { mutableStateOf(AppNavTab.DASHBOARD) }
+
     val transactions by db.transactionDao().getAllTransactions().collectAsState(initial = emptyList())
     val totalIncomeState by db.transactionDao().getTotalIncome().collectAsState(initial = 0.0)
     val totalExpenseState by db.transactionDao().getTotalExpense().collectAsState(initial = 0.0)
@@ -80,6 +90,7 @@ fun MainDashboardScreen(
     var showAiChat by remember { mutableStateOf(false) }
     var showChartOfAccounts by remember { mutableStateOf(false) }
     var showFinancialReports by remember { mutableStateOf(false) }
+    var showOwnerDashboard by remember { mutableStateOf(false) }
 
     val filteredTransactions = remember(transactions, selectedFilter) {
         when (selectedFilter) {
@@ -115,13 +126,20 @@ fun MainDashboardScreen(
                         }
                         Spacer(modifier = Modifier.width(10.dp))
                         Text(
-                            text = "محاسب AI",
+                            text = "محاسب AI ERP",
                             fontWeight = FontWeight.Bold,
                             fontSize = 20.sp
                         )
                     }
                 },
                 actions = {
+                    IconButton(onClick = { showOwnerDashboard = true }) {
+                        Icon(
+                            imageVector = Icons.Default.AdminPanelSettings,
+                            contentDescription = "لوحة تحكم المالك",
+                            tint = Color(0xFFF59E0B)
+                        )
+                    }
                     IconButton(onClick = { showChartOfAccounts = true }) {
                         Icon(
                             imageVector = Icons.Default.AccountTree,
@@ -134,13 +152,6 @@ fun MainDashboardScreen(
                             imageVector = Icons.Default.Assessment,
                             contentDescription = "الميزانية والتقارير",
                             tint = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                    IconButton(onClick = { showAiChat = true }) {
-                        Icon(
-                            imageVector = Icons.Default.AutoAwesome,
-                            contentDescription = "الوكيل الذكي",
-                            tint = Color(0xFF6366F1)
                         )
                     }
                     IconButton(onClick = onLogout) {
@@ -156,148 +167,199 @@ fun MainDashboardScreen(
                 )
             )
         },
-        floatingActionButton = {
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                SmallFloatingActionButton(
+        bottomBar = {
+            NavigationBar(
+                containerColor = MaterialTheme.colorScheme.surface,
+                tonalElevation = 8.dp
+            ) {
+                NavigationBarItem(
+                    selected = currentTab == AppNavTab.DASHBOARD,
+                    onClick = { currentTab = AppNavTab.DASHBOARD },
+                    icon = { Icon(Icons.Default.Dashboard, contentDescription = null) },
+                    label = { Text("الرئيسية", fontSize = 11.sp, fontWeight = FontWeight.SemiBold) }
+                )
+                NavigationBarItem(
+                    selected = currentTab == AppNavTab.INVOICES,
+                    onClick = { currentTab = AppNavTab.INVOICES },
+                    icon = { Icon(Icons.Default.PointOfSale, contentDescription = null) },
+                    label = { Text("الفواتير", fontSize = 11.sp, fontWeight = FontWeight.SemiBold) }
+                )
+                NavigationBarItem(
+                    selected = currentTab == AppNavTab.DEBTS,
+                    onClick = { currentTab = AppNavTab.DEBTS },
+                    icon = { Icon(Icons.Default.People, contentDescription = null) },
+                    label = { Text("الذمم والعملاء", fontSize = 11.sp, fontWeight = FontWeight.SemiBold) }
+                )
+                NavigationBarItem(
+                    selected = currentTab == AppNavTab.INVENTORY,
+                    onClick = { currentTab = AppNavTab.INVENTORY },
+                    icon = { Icon(Icons.Default.Inventory2, contentDescription = null) },
+                    label = { Text("المخزون", fontSize = 11.sp, fontWeight = FontWeight.SemiBold) }
+                )
+                NavigationBarItem(
+                    selected = currentTab == AppNavTab.AI_CHAT,
                     onClick = { showAiChat = true },
-                    containerColor = Color(0xFF6366F1),
-                    contentColor = Color.White
-                ) {
-                    Icon(Icons.Default.AutoAwesome, contentDescription = "المساعد الذكي")
-                }
-                FloatingActionButton(
-                    onClick = { showBottomSheet = true },
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = Color.White,
-                    shape = RoundedCornerShape(20.dp),
-                    elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 6.dp)
-                ) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = 16.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                    icon = { Icon(Icons.Default.AutoAwesome, contentDescription = null, tint = Color(0xFF6366F1)) },
+                    label = { Text("الذكاء الاصطناعي", fontSize = 11.sp, fontWeight = FontWeight.SemiBold, color = Color(0xFF6366F1)) }
+                )
+            }
+        },
+        floatingActionButton = {
+            if (currentTab == AppNavTab.DASHBOARD) {
+                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    SmallFloatingActionButton(
+                        onClick = { showAiChat = true },
+                        containerColor = Color(0xFF6366F1),
+                        contentColor = Color.White
                     ) {
-                        Icon(Icons.Default.Add, contentDescription = "إضافة")
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text("إضافة معاملة", fontWeight = FontWeight.Bold)
+                        Icon(Icons.Default.AutoAwesome, contentDescription = "المساعد الذكي")
+                    }
+                    FloatingActionButton(
+                        onClick = { showBottomSheet = true },
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = Color.White,
+                        shape = RoundedCornerShape(20.dp),
+                        elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 6.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(horizontal = 16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(Icons.Default.Add, contentDescription = "إضافة")
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text("إضافة معاملة", fontWeight = FontWeight.Bold)
+                        }
                     }
                 }
             }
         }
     ) { paddingValues ->
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(horizontal = 20.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // بنر حالة اتصال وكلاء الذكاء الاصطناعي بالذاكرة وبوت تلغرام
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(Color(0xFF10B981).copy(alpha = 0.12f))
-                    .padding(horizontal = 12.dp, vertical = 8.dp)
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
+            when (currentTab) {
+                AppNavTab.DASHBOARD -> {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 20.dp, vertical = 10.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
                         Box(
                             modifier = Modifier
-                                .size(8.dp)
-                                .background(Color(0xFF10B981), shape = CircleShape)
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(Color(0xFF10B981).copy(alpha = 0.12f))
+                                .padding(horizontal = 12.dp, vertical = 8.dp)
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(8.dp)
+                                            .background(Color(0xFF10B981), shape = CircleShape)
+                                    )
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text(
+                                        text = "وكلاء الذكاء الاصطناعي متصلون بالذاكرة وتلغرام",
+                                        fontSize = 12.sp,
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = Color(0xFF10B981)
+                                    )
+                                }
+                                Text(
+                                    text = "v1.0 ERP Enterprise",
+                                    fontSize = 11.sp,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        }
+
+                        AutoUpdateCheckBanner(onUpdateClick = { })
+
+                        GradientBalanceCard(
+                            netBalance = netBalance,
+                            totalIncome = totalIncome,
+                            totalExpense = totalExpense
                         )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = "وكلاء الذكاء الاصطناعي متصلون بالذاكرة وتلغرام",
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = Color(0xFF10B981)
+
+                        FilterChipsRow(
+                            selectedFilter = selectedFilter,
+                            onFilterSelected = { selectedFilter = it }
                         )
-                    }
-                    Text(
-                        text = "v1.0 Enterprise",
-                        fontSize = 11.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            }
 
-            // بنر التحديث التلقائي الذاتي
-            AutoUpdateCheckBanner(onUpdateClick = { })
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "سجل المعاملات",
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onBackground
+                            )
+                            Text(
+                                text = "${filteredTransactions.size} معاملة",
+                                fontSize = 13.sp,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
 
-            // كارت الرصيد التدرجي الفاخر (Gradient Hero Card)
-            GradientBalanceCard(
-                netBalance = netBalance,
-                totalIncome = totalIncome,
-                totalExpense = totalExpense
-            )
-
-            // شريط تصفية وتحديد المعاملات السريعة
-            FilterChipsRow(
-                selectedFilter = selectedFilter,
-                onFilterSelected = { selectedFilter = it }
-            )
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "سجل المعاملات",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-                Text(
-                    text = "${filteredTransactions.size} معاملة",
-                    fontSize = 13.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-
-            // قائمة المعاملات المحدثة
-            if (filteredTransactions.isEmpty()) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(
-                            imageVector = Icons.Default.ReceiptLong,
-                            contentDescription = null,
-                            modifier = Modifier.size(64.dp),
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f)
-                        )
-                        Spacer(modifier = Modifier.height(12.dp))
-                        Text(
-                            text = "لا توجد معاملات في هذه الفئة",
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                }
-            } else {
-                LazyColumn(
-                    modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    items(filteredTransactions, key = { it.id }) { item ->
-                        ModernTransactionCard(
-                            transaction = item,
-                            onDelete = {
-                                scope.launch {
-                                    db.transactionDao().deleteTransaction(item)
+                        if (filteredTransactions.isEmpty()) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .weight(1f),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                    Icon(
+                                        imageVector = Icons.Default.ReceiptLong,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(64.dp),
+                                        tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f)
+                                    )
+                                    Spacer(modifier = Modifier.height(12.dp))
+                                    Text(
+                                        text = "لا توجد معاملات في هذه الفئة",
+                                        fontSize = 16.sp,
+                                        fontWeight = FontWeight.Medium,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
                                 }
                             }
-                        )
+                        } else {
+                            LazyColumn(
+                                modifier = Modifier.weight(1f),
+                                verticalArrangement = Arrangement.spacedBy(12.dp)
+                            ) {
+                                items(filteredTransactions, key = { it.id }) { item ->
+                                    ModernTransactionCard(
+                                        transaction = item,
+                                        onDelete = {
+                                            scope.launch {
+                                                db.transactionDao().deleteTransaction(item)
+                                            }
+                                        }
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+                AppNavTab.INVOICES -> SalesInvoicesScreen()
+                AppNavTab.DEBTS -> CustomersDebtsScreen()
+                AppNavTab.INVENTORY -> InventoryScreen()
+                AppNavTab.AI_CHAT -> {
+                    LaunchedEffect(Unit) {
+                        showAiChat = true
                     }
                 }
             }
@@ -330,7 +392,7 @@ fun MainDashboardScreen(
     }
 
     if (showAiChat) {
-        AiChatDialog(onDismiss = { showAiChat = false })
+        AiChatDialog(onDismiss = { showAiChat = false; if (currentTab == AppNavTab.AI_CHAT) currentTab = AppNavTab.DASHBOARD })
     }
 
     if (showChartOfAccounts) {
@@ -339,6 +401,10 @@ fun MainDashboardScreen(
 
     if (showFinancialReports) {
         FinancialReportsDialog(onDismiss = { showFinancialReports = false })
+    }
+
+    if (showOwnerDashboard) {
+        OwnerDashboardDialog(onDismiss = { showOwnerDashboard = false })
     }
 }
 

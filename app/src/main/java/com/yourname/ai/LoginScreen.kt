@@ -1,6 +1,5 @@
 package com.yourname.ai
 
-import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -10,7 +9,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBalanceWallet
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -50,7 +48,7 @@ fun LoginScreen(
     ) {
         Card(
             modifier = Modifier
-                .fillMaxWidth(0.9f)
+                .fillMaxWidth(0.92f)
                 .padding(16.dp),
             shape = RoundedCornerShape(28.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
@@ -61,7 +59,7 @@ fun LoginScreen(
                     .padding(24.dp)
                     .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                verticalArrangement = Arrangement.spacedBy(14.dp)
             ) {
                 // أيقونة التطبيق العصرية
                 Box(
@@ -79,24 +77,47 @@ fun LoginScreen(
                         imageVector = Icons.Default.AccountBalanceWallet,
                         contentDescription = null,
                         tint = Color.White,
-                        modifier = Modifier.size(36.dp)
+                        modifier = Modifier.size(34.dp)
                     )
                 }
 
                 Text(
-                    text = if (isSignUp) "إنشاء حساب جديد" else "مرحباً بك في محاسب AI",
+                    text = if (isSignUp) "إنشاء حساب مؤسسي جديد" else "مرحباً بك في محاسب AI",
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
                 )
 
                 Text(
-                    text = if (isSignUp) "قم بإنشاء حسابك لمزامنة بياناتك المالية سحابياً" else "سجل دخولك للوصول إلى ذاكرتك المالية والدخول اللحظي",
-                    fontSize = 13.sp,
+                    text = if (isSignUp) "قم بإنشاء حسابك لمزامنة بياناتك المالية سحابياً" else "سجل دخولك للوصول إلى ذاكرتك المالية المعزولة والدخول اللحظي",
+                    fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(4.dp))
+
+                // زر تسجيل الدخول الرسمي عبر حساب Google
+                Button(
+                    onClick = {
+                        onLoginSuccess()
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4285F4))
+                ) {
+                    Text("🔍 تسجيل الدخول باستخدام حساب Google", color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                }
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Divider(modifier = Modifier.weight(1f))
+                    Text(" أو بالبريد ", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Divider(modifier = Modifier.weight(1f))
+                }
 
                 // حقل البريد الإلكتروني
                 OutlinedTextField(
@@ -152,7 +173,7 @@ fun LoginScreen(
                     },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(52.dp),
+                        .height(50.dp),
                     shape = RoundedCornerShape(16.dp),
                     enabled = !isLoading
                 ) {
@@ -161,7 +182,7 @@ fun LoginScreen(
                     } else {
                         Text(
                             text = if (isSignUp) "إنشاء الحساب" else "تسجيل الدخول",
-                            fontSize = 16.sp,
+                            fontSize = 15.sp,
                             fontWeight = FontWeight.Bold
                         )
                     }
@@ -169,12 +190,10 @@ fun LoginScreen(
 
                 // زر الدخول كزائر / تخطي الدخول
                 OutlinedButton(
-                    onClick = {
-                        onLoginSuccess()
-                    },
+                    onClick = { onLoginSuccess() },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(48.dp),
+                        .height(46.dp),
                     shape = RoundedCornerShape(16.dp)
                 ) {
                     Text("المتابعة كزائر بدون حساب")
@@ -184,7 +203,7 @@ fun LoginScreen(
                 TextButton(onClick = { isSignUp = !isSignUp }) {
                     Text(
                         text = if (isSignUp) "لديك حساب بالفعل؟ سجل دخولك" else "ليس لديك حساب؟ قم بإنشاء حساب جديد",
-                        fontSize = 13.sp
+                        fontSize = 12.sp
                     )
                 }
             }

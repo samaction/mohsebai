@@ -12,6 +12,7 @@ enum class TransactionType {
 @Entity(tableName = "transactions")
 data class TransactionEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    val userId: String = "main_user", // رمز المستخدم لعزل البيانات Multi-Tenancy
     val title: String,
     val amount: Double,
     val type: TransactionType,
