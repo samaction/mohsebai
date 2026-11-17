@@ -307,11 +307,17 @@ fun MainDashboardScreen(
     if (showBottomSheet) {
         AddTransactionBottomSheet(
             onDismiss = { showBottomSheet = false },
-            onSave = { title, amount, type, category, note ->
+            onSave = { title, amount, type, category, paymentMethod, note ->
                 scope.launch {
+                    val methodLabel = when(paymentMethod) {
+                        PaymentMethod.CASH -> "نقداً"
+                        PaymentMethod.CREDIT -> "ذمة"
+                        PaymentMethod.BANK -> "بنك"
+                    }
+                    val fullTitle = "$title [$methodLabel]"
                     db.transactionDao().insertTransaction(
                         TransactionEntity(
-                            title = title,
+                            title = fullTitle,
                             amount = amount,
                             type = type,
                             category = category,
@@ -554,7 +560,7 @@ fun ModernTransactionCard(
 }
 
 fun formatCurrency(amount: Double): String {
-    val formatter = NumberFormat.getCurrencyInstance(Locale("ar", "SA"))
+    val formatter = NumberFormat.getCurrencyInstance(Locale.US)
     return formatter.format(amount)
 }
 

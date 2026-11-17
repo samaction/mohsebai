@@ -1,0 +1,13 @@
+{
+  "name": "ai-accountant-telegram-bot",
+  "version": "1.0.0",
+  "description": "Telegram Bot Agent for AI Accountant App Sync",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "firebase-admin": "^12.0.0",
+    "node-telegram-bot-api": "^0.65.0"
+  }
+}
